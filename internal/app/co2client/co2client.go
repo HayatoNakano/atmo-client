@@ -29,10 +29,6 @@ func correct(raw values) (corrected *values) {
 	return &values{raw.co2, hum, tmp}
 }
 
-func (c *client) open() (*serial.Port, error) {
-	return serial.OpenPort(&serial.Config{Name: c.dev, Baud: 115200})
-}
-
 func (c *client) Start() {
 	s, err := c.open()
 	if err != nil {
@@ -56,6 +52,10 @@ func (c *client) Start() {
 		time.Sleep(1 * time.Second)
 	}
 
+}
+
+func (c *client) open() (*serial.Port, error) {
+	return serial.OpenPort(&serial.Config{Name: c.dev, Baud: 115200})
 }
 
 func (c *client) read(line string) (value *values, err error) {
