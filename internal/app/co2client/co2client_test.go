@@ -13,8 +13,9 @@ func TestReading(t *testing.T) {
 		input       string
 		values      values
 	}
+	re := regexp.MustCompile(`CO2=(?P<co2>\d+),HUM=(?P<hum>\d+\.\d+),TMP=(?P<tmp>-?\d+\.\d+)`)
 
-	c := client{re: regexp.MustCompile(`CO2=(?P<co2>\d+),HUM=(?P<hum>\d+\.\d+),TMP=(?P<tmp>-?\d+\.\d+)`)}
+	c := Client{re: re}
 
 	for _, e := range []testcase{
 		{"", "CO2=497,HUM=42.0,TMP=29.3", values{co2: 497, hum: 42.0, tmp: 29.3}},
