@@ -31,3 +31,17 @@ func TestReading(t *testing.T) {
 		}
 	}
 }
+
+func TestCorrecting(t *testing.T) {
+	type testcase struct {
+		raw      values
+		expected values
+	}
+	for _, e := range []testcase{
+		{values{co2: 497, hum: 42.0, tmp: 29.3}, values{co2: 497, hum: 48.783404520484964, tmp: 24.8}},
+		{values{co2: 731, hum: 44.4, tmp: 29.7}, values{co2: 731, hum: 51.44662921348314, tmp: 25.2}},
+	} {
+		a := correct(e.raw)
+		assert.EqualValues(t, e.expected, *a)
+	}
+}

@@ -22,6 +22,13 @@ type client struct {
 	re  *regexp.Regexp
 }
 
+func correct(raw values) (corrected *values) {
+	// https://x.com/rynan4818/status/1627089985454366720
+	tmp := raw.tmp - 4.5
+	hum := raw.hum * raw.tmp * (tmp + 237.3) / (tmp * (raw.tmp + 237.3))
+	return &values{raw.co2, hum, tmp}
+}
+
 func (c *client) open() (*serial.Port, error) {
 	return serial.OpenPort(&serial.Config{Name: c.dev, Baud: 115200})
 }
@@ -40,7 +47,12 @@ func (c *client) Start() {
 			log.Fatal(err)
 		}
 
-		c.read(string(line))
+		v, err := c.read(string(line))
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		correct(*v)
 		time.Sleep(1 * time.Second)
 	}
 
