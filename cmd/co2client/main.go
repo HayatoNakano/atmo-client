@@ -9,7 +9,7 @@ import (
 func main() {
 	c := co2client.Client{}
 
-	err := c.Connect()
+	err := c.Init()
 	defer c.Close()
 	if err != nil {
 		log.Fatal(err)
