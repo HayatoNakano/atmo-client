@@ -7,10 +7,15 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/hn-11/atmo-client/internal/pkg/db"
 	"github.com/tarm/serial"
 )
 
-const DEV = "/dev/ttyACM0"
+const (
+	DEV              = "/dev/ttyACM0"
+	BUCKET_NAME      = "CO2"
+	MEASUREMENT_NAME = "co2"
+)
 
 type values struct {
 	co2 float64
@@ -19,9 +24,10 @@ type values struct {
 }
 
 type Client struct {
-	dev  string
-	re   *regexp.Regexp
-	conn *serial.Port
+	dev      string
+	re       *regexp.Regexp
+	conn     *serial.Port
+	dbClient db.Client
 }
 
 func correct(raw values) (corrected *values) {
@@ -58,6 +64,10 @@ func (c *Client) Start() error {
 
 	reader := bufio.NewReader(c.conn)
 
+	c.dbClient = db.Client{Bucket: BUCKET_NAME, Measurement: MEASUREMENT_NAME}
+	c.dbClient.Connect()
+	defer c.dbClient.Close()
+
 	for {
 		line, _, err := reader.ReadLine()
 		if err != nil {
@@ -69,7 +79,7 @@ func (c *Client) Start() error {
 			return err
 		}
 		if v != nil {
-			correct(*v)
+			c.write(v)
 			fmt.Print(*correct(*v))
 		}
 		time.Sleep(10 * time.Second)
@@ -95,4 +105,12 @@ func (c *Client) read(line string) (value *values, err error) {
 	}
 
 	return &values{result[0], result[1], result[2]}, nil
+}
+
+func (c *Client) write(v *values) {
+	c.dbClient.Write(map[string]interface{}{
+		"CO2": v.co2,
+		"HUM": v.hum,
+		"TMP": v.tmp,
+	})
 }
