@@ -20,8 +20,8 @@ func TestReading(t *testing.T) {
 	for _, e := range []testcase{
 		{"", "CO2=497,HUM=42.0,TMP=29.3", values{co2: 497, hum: 42.0, tmp: 29.3}},
 		{"", "CO2=731,HUM=44.4,TMP=29.7", values{co2: 731, hum: 44.4, tmp: 29.7}},
-		{"invalid format: ", "", values{}},
-		{"invalid format: STP", "STP", values{}},
+		{"invalid format: ''", "", values{}},
+		{"invalid format: 'STP'", "STP", values{}},
 	} {
 		a, err := c.read(e.input)
 		if e.expectedErr != "" {

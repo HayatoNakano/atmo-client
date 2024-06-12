@@ -80,11 +80,9 @@ func (c *Client) Start() error {
 		}
 		if v != nil {
 			c.write(v)
-			fmt.Print(*correct(*v))
 		}
 		time.Sleep(10 * time.Second)
 	}
-
 }
 
 func (c *Client) read(line string) (value *values, err error) {
@@ -93,7 +91,7 @@ func (c *Client) read(line string) (value *values, err error) {
 	}
 	matches := c.re.FindStringSubmatch(line)
 	if len(matches) != 4 {
-		return nil, fmt.Errorf("invalid format: %s", line)
+		return nil, fmt.Errorf("invalid format: '%s'", line)
 	}
 
 	var result [3]float64
