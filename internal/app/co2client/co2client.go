@@ -25,7 +25,6 @@ type values struct {
 }
 
 type Client struct {
-	dev      string
 	re       *regexp.Regexp
 	conn     *serial.Port
 	reader   *bufio.Reader
@@ -39,26 +38,25 @@ func correct(raw values) (corrected *values) {
 	return &values{raw.co2, hum, tmp}
 }
 
-func (c *Client) Init() error {
-	c.dev = DEV
-	conn, err := serial.OpenPort(&serial.Config{Name: c.dev, Baud: 115200})
-	c.conn = conn
-	c.re = regexp.MustCompile(`CO2=(?P<co2>\d+),HUM=(?P<hum>\d+\.\d+),TMP=(?P<tmp>-?\d+\.\d+)`)
+func Init() (*Client, error) {
+	conn, err := serial.OpenPort(&serial.Config{Name: DEV, Baud: 115200})
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	_, err = c.conn.Write([]byte("STA\r\n"))
+	re := regexp.MustCompile(`CO2=(?P<co2>\d+),HUM=(?P<hum>\d+\.\d+),TMP=(?P<tmp>-?\d+\.\d+)`)
+
+	_, err = conn.Write([]byte("STA\r\n"))
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	c.reader = bufio.NewReader(c.conn)
+	reader := bufio.NewReader(conn)
 
-	c.dbClient = db.Client{Bucket: BUCKET_NAME, Measurement: MEASUREMENT_NAME}
-	c.dbClient.Connect()
+	dbClient := db.Client{Bucket: BUCKET_NAME, Measurement: MEASUREMENT_NAME}
+	dbClient.Connect()
 
-	return err
+	return &Client{re, conn, reader, dbClient}, nil
 }
 
 func (c *Client) Close() error {

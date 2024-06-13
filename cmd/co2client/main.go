@@ -7,13 +7,11 @@ import (
 )
 
 func main() {
-	c := co2client.Client{}
-
-	err := c.Init()
-	defer c.Close()
+	c, err := co2client.Init()
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer c.Close()
 
 	err = c.Start()
 	if err != nil {
