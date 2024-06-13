@@ -18,5 +18,6 @@ require (
 require (
 	github.com/influxdata/influxdb-client-go/v2 v2.13.0
 	github.com/stretchr/testify v1.9.0
+	github.com/tenntenn/natureremo v0.4.0
 	golang.org/x/sys v0.21.0 // indirect
 )

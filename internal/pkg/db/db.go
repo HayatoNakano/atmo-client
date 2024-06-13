@@ -23,6 +23,7 @@ type Client struct {
 
 func (c *Client) Connect() {
 	c.client = influxdb2.NewClient(INFLUX_URL, os.Getenv(INFLUX_TOKEN))
+	c.writeAPI = c.client.WriteAPI(INFLUX_ORG, c.Bucket)
 }
 
 func (c *Client) Close() {
@@ -31,7 +32,6 @@ func (c *Client) Close() {
 }
 
 func (c *Client) Write(fields map[string]interface{}, t time.Time) {
-	c.writeAPI = c.client.WriteAPI(INFLUX_ORG, c.Bucket)
 	p := influxdb2.NewPoint(c.Measurement, nil, fields, t)
 	c.writeAPI.WritePoint(p)
 }
