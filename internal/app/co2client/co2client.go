@@ -112,5 +112,5 @@ func (c *Client) write(v *values) {
 		"CO2": v.co2,
 		"HUM": v.hum,
 		"TMP": v.tmp,
-	})
+	}, time.Now())
 }

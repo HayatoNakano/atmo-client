@@ -30,8 +30,8 @@ func (c *Client) Close() {
 	c.client.Close()
 }
 
-func (c *Client) Write(fields map[string]interface{}) {
+func (c *Client) Write(fields map[string]interface{}, t time.Time) {
 	c.writeAPI = c.client.WriteAPI(INFLUX_ORG, c.Bucket)
-	p := influxdb2.NewPoint(c.Measurement, nil, fields, time.Now())
+	p := influxdb2.NewPoint(c.Measurement, nil, fields, t)
 	c.writeAPI.WritePoint(p)
 }
