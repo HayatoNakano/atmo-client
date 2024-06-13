@@ -3,6 +3,7 @@ package co2client
 import (
 	"bufio"
 	"fmt"
+	"log"
 	"regexp"
 	"strconv"
 	"time"
@@ -56,7 +57,6 @@ func (c *Client) Init() error {
 
 	c.dbClient = db.Client{Bucket: BUCKET_NAME, Measurement: MEASUREMENT_NAME}
 	c.dbClient.Connect()
-	defer c.dbClient.Close()
 
 	return err
 }
@@ -80,10 +80,10 @@ func (c *Client) Start() error {
 
 		v, err := c.read(string(line))
 		if err != nil {
-			return err
+			log.Print(err)
 		}
 		if v != nil {
-			c.write(v)
+			c.write(correct(*v))
 		}
 		time.Sleep(10 * time.Second)
 	}
