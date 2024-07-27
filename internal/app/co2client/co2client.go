@@ -83,7 +83,6 @@ func (c *Client) Start() error {
 		if v != nil {
 			c.write(correct(*v))
 		}
-		time.Sleep(10 * time.Second)
 	}
 }
 
